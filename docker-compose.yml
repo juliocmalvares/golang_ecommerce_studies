@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  # db:
+  #   container_name: pg_db_container
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_DB: ecommerce
+  #     POSTGRES_USER: core
+  #     POSTGRES_PASSWORD: secure_password123
+  #   ports:
+  #     - "55432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+
+  # pgadmin:
+  #   container_name: pgadmin4_container
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: root
+  #   ports:
+  #     - "5050:80"
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  
+
+  beskar:
+    build:
+      context: ./beskar
+      dockerfile: Dockerfile
+      target: dev
+    container_name: beskar_container
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./beskar:/app
+    # depends_on:
+      # - db
+  
+  ecomm:
+    build:
+      context: ./ecomm
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ecomm_container
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./ecomm:/app
+    # depends_on:
+      # - db
+
+  hermes:
+    build:
+      context: ./hermes
+      dockerfile: Dockerfile
+      target: dev
+    container_name: hermes_container
+    ports:
+      - "5002:5000"
+    volumes:
+      - ./hermes:/app
+    # depends_on:
+      # - db
+
+
+# volumes:
+  # postgres-data:
+  # pgadmin-data:
