@@ -1,6 +1,7 @@
 package database
 
 import (
+	"ecomm/domain/models"
 	"fmt"
 	"log"
 	"os"
@@ -38,7 +39,7 @@ func connectDb() (*gorm.DB, error) {
 	if viper.GetString("ENV") == "prod" {
 
 	} else if viper.GetString("ENV") == "dev" {
-		str_conn = fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", "localhost", "55433", "core", "tavern", "secure_password123")
+		str_conn = fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", "localhost", "55432", "core", "ecommerce", "secure_password123")
 		gormDB, err := gorm.Open(postgres.Open(str_conn), &gorm.Config{Logger: newLogger})
 		if err != nil {
 			fmt.Println(err)
@@ -60,5 +61,21 @@ func connectDb() (*gorm.DB, error) {
 }
 
 func migrations(db *gorm.DB) error {
+	err := db.AutoMigrate(&models.Category{})
+	if err != nil {
+		return err
+	}
+	err = db.AutoMigrate(&models.Product{})
+	if err != nil {
+		return err
+	}
+	err = db.AutoMigrate(&models.ProductVariation{})
+	if err != nil {
+		return err
+	}
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		return err
+	}
 	return nil
 }

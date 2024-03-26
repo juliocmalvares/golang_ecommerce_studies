@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"ecomm/domain/controllers"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -41,10 +42,30 @@ func (r *Server) routes() {
 
 	apiGroup := r.Engine.Group("/api")
 	{
-		apiGroup.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
+		//User
+		userGroup := apiGroup.Group("/user")
+		{
+			userCtr := controllers.InitUserController()
+			userGroup.POST("/create", userCtr.Create())
+			userGroup.GET("/find", userCtr.FindByID())
+			userGroup.PUT("/update", userCtr.Update())
+		}
+		// Category
+		categoryGroup := apiGroup.Group("/category")
+		{
+			categoryCtr := controllers.InitCategoryController()
+			categoryGroup.GET("/list", categoryCtr.List())
+			// categoryGroup.GET("/find", categoryCtr.FindByID())
+			categoryGroup.GET("/find", categoryCtr.FindByName())
+			categoryGroup.POST("/create", categoryCtr.Create())
+			categoryGroup.PUT("/update", categoryCtr.Update())
+
+		}
+
+		// //Product
+		// productGroup := apiGroup.Group("/product")
+		// {
+
+		// }
 	}
 }
