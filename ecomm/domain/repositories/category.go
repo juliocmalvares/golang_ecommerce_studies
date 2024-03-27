@@ -61,7 +61,6 @@ func (r *CategoryRepository) Create(category *models.Category) (*models.Category
 		r.DB.Create(&category)
 		return category, nil
 	}
-	return nil, nil
 }
 
 func (r *CategoryRepository) Update(category *models.Category) (*models.Category, error) {

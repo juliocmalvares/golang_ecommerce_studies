@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   db:
-    container_name: pg_db_container
+    container_name: pg_db_ecomm_container
     image: postgres:latest
     environment:
       POSTGRES_DB: ecommerce
@@ -14,14 +14,14 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   pgadmin:
-    container_name: pgadmin4_container
+    container_name: pgadmin4_container_ecomm
     image: dpage/pgadmin4
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
-      - "5050:80"
+      - "5051:80"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
   

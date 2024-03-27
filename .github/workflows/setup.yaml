@@ -1,0 +1,44 @@
+name: Run Microservices
+
+on:
+  push:
+    branches:
+      - main  # Executa o workflow quando houver push para a branch main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2  # Passo para clonar o repositório para o ambiente de execução do GitHub Actions
+
+      - name: Run ecomm service
+        working-directory: ecomm  # Define o diretório de trabalho para o serviço ecomm
+        run: |
+          go mod download
+          go build
+          go test -v
+
+      - name: Run beskar service
+        working-directory: beskar  # Define o diretório de trabalho para o serviço beskar
+        run: |
+          go mod download
+          go build
+          go test -v
+
+      - name: Run hermes service
+        working-directory: hermes  # Define o diretório de trabalho para o serviço hermes
+        run: |
+          go mod download
+          go build
+          go test -v
+
+      - name: Check for errors
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "All services ran successfully."
+          else
+            echo "Error(s) occurred in one or more services."
+            exit 1
+          fi
