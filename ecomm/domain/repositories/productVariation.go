@@ -22,10 +22,16 @@ func InitProductVariationRepo() *ProductVariationRepository {
 	}
 }
 
+func initProductVariationRepoForTest(db *gorm.DB) *ProductVariationRepository {
+	return &ProductVariationRepository{
+		DB: db,
+	}
+}
+
 type IProductVariationRepository interface {
 	List() ([]models.ProductVariation, error)
-	ListByProductID(categoryID int) ([]models.ProductVariation, error)
-	FindByID(id int) (*models.ProductVariation, error)
+	ListByProductID(productID uint) ([]models.ProductVariation, error)
+	FindByID(id uint) (*models.ProductVariation, error)
 	Create(product *models.ProductVariation) (*models.ProductVariation, error)
 	Update(product *models.ProductVariation) (*models.ProductVariation, error)
 }
@@ -39,7 +45,7 @@ func (r *ProductVariationRepository) List() ([]models.ProductVariation, error) {
 	return products, nil
 }
 
-func (r *ProductVariationRepository) ListByProductID(productID int) ([]models.ProductVariation, error) {
+func (r *ProductVariationRepository) ListByProductID(productID uint) ([]models.ProductVariation, error) {
 	var products []models.ProductVariation
 	err := r.DB.Preload(clause.Associations).Where("product_id = ?", productID).Find(&products).Error
 	if err != nil {
@@ -48,7 +54,7 @@ func (r *ProductVariationRepository) ListByProductID(productID int) ([]models.Pr
 	return products, nil
 }
 
-func (r *ProductVariationRepository) FindByID(id int) (*models.ProductVariation, error) {
+func (r *ProductVariationRepository) FindByID(id uint) (*models.ProductVariation, error) {
 	var product models.ProductVariation
 	err := r.DB.Preload(clause.Associations).First(&product, id).Error
 	if err != nil {

@@ -22,6 +22,12 @@ func InitCategoryRepo() *CategoryRepository {
 	}
 }
 
+func initCategoryRepoForTest(db *gorm.DB) *CategoryRepository {
+	return &CategoryRepository{
+		DB: db,
+	}
+}
+
 type ICategoryRepository interface {
 	List() ([]models.Category, error)
 	FindByName(name string) (*models.Category, error)
@@ -32,7 +38,7 @@ type ICategoryRepository interface {
 
 func (r *CategoryRepository) Create(category *models.Category) (*models.Category, error) {
 	var counter int64
-	if category.ParentID == 0 {
+	if category.ParentID == nil {
 		err := r.DB.Model(&models.Category{}).Where("name = ?", category.Name).Count(&counter).Error
 		if err != nil {
 			return nil, err
@@ -71,7 +77,10 @@ func (r *CategoryRepository) Update(category *models.Category) (*models.Category
 	}
 
 	if counter > 0 {
-		r.DB.Save(&category)
+		err = r.DB.Save(&category).Error
+		if err != nil {
+			return nil, err
+		}
 		return category, nil
 	}
 	return nil, gorm.ErrRecordNotFound

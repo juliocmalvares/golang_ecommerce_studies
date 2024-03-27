@@ -63,9 +63,15 @@ func (r *Server) routes() {
 		}
 
 		// //Product
-		// productGroup := apiGroup.Group("/product")
-		// {
-
-		// }
+		productGroup := apiGroup.Group("/product")
+		{
+			productCtr := controllers.InitProductController()
+			productGroup.POST("/create", productCtr.Create())
+			productGroup.PUT("/update", productCtr.Update())
+			productGroup.GET("/list", productCtr.List())
+			productGroup.GET("/find", productCtr.FindByID())
+			productGroup.GET("/findByName", productCtr.FindByName())
+			productGroup.GET("/listByCategory", productCtr.ListByCategoryID())
+		}
 	}
 }

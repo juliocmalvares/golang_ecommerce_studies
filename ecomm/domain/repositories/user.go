@@ -21,6 +21,12 @@ func InitUserRepo() *UserRepository {
 	}
 }
 
+func initUserRepoForTest(db *gorm.DB) *UserRepository {
+	return &UserRepository{
+		DB: db,
+	}
+}
+
 type IUserRepository interface {
 	FindByID(id int) (*models.User, error)
 	Create(user *models.User) (*models.User, error)

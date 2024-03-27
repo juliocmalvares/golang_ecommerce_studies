@@ -21,11 +21,17 @@ func InitProductRepo() *ProductRepository {
 		DB: db,
 	}
 }
+func initProductRepoForTest(db *gorm.DB) *ProductRepository {
+	return &ProductRepository{
+		DB: db,
+	}
+}
 
 type IProductRepository interface {
 	List() ([]models.Product, error)
 	ListByCategoryID(categoryID int) ([]models.Product, error)
 	FindByID(id int) (*models.Product, error)
+	FindByName(name string) (*models.Product, error)
 	Create(product *models.Product) (*models.Product, error)
 	Update(product *models.Product) (*models.Product, error)
 }
@@ -39,7 +45,7 @@ func (r *ProductRepository) List() ([]models.Product, error) {
 	return products, nil
 }
 
-func (r *ProductRepository) ListByCategoryID(categoryID int) ([]models.Product, error) {
+func (r *ProductRepository) ListByCategoryID(categoryID uint) ([]models.Product, error) {
 	var products []models.Product
 	err := r.DB.Preload(clause.Associations).Where("category_id = ?", categoryID).Find(&products).Error
 	if err != nil {
@@ -48,7 +54,7 @@ func (r *ProductRepository) ListByCategoryID(categoryID int) ([]models.Product, 
 	return products, nil
 }
 
-func (r *ProductRepository) FindByID(id int) (*models.Product, error) {
+func (r *ProductRepository) FindByID(id uint) (*models.Product, error) {
 	var product models.Product
 	err := r.DB.Preload(clause.Associations).First(&product, id).Error
 	if err != nil {
@@ -71,4 +77,13 @@ func (r *ProductRepository) Update(product *models.Product) (*models.Product, er
 		return nil, err
 	}
 	return product, nil
+}
+
+func (r *ProductRepository) FindByName(name string) (*models.Product, error) {
+	var product models.Product
+	err := r.DB.Preload(clause.Associations).Where("name = ?", name).First(&product).Error
+	if err != nil {
+		return nil, err
+	}
+	return &product, nil
 }
