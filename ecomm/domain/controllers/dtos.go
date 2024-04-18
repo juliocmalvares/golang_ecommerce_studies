@@ -1,6 +1,9 @@
 package controllers
 
-import "ecomm/domain/models"
+import (
+	"ecomm/domain/models"
+	"time"
+)
 
 type UserCreateBody struct {
 	Email    string `json:"email"`
@@ -131,5 +134,69 @@ func (p *ProductUpdateBody) ToModel() *models.Product {
 		Images:            p.Images,
 		Visible:           p.Visible,
 		ProductVariations: variations,
+	}
+}
+
+type OrderItemCreateBody struct {
+	ProductID          uint    `json:"product_id"`
+	ProductVariationID uint    `json:"product_variation_id"`
+	Quantity           uint    `json:"quantity"`
+	Price              float64 `json:"price"`
+}
+
+func (o *OrderItemCreateBody) ToModel() *models.OrderItem {
+	return &models.OrderItem{
+		ProductID:          o.ProductID,
+		ProductVariationID: o.ProductVariationID,
+		Quantity:           o.Quantity,
+		Price:              o.Price,
+		Subtotal:           o.Price * float64(o.Quantity),
+		Discount:           0.0,
+	}
+}
+
+type OrderCreateBody struct {
+	UserID     uint                  `json:"user_id"`
+	OrderItems []OrderItemCreateBody `json:"order_items"`
+}
+
+func (o *OrderCreateBody) ToModel() *models.Order {
+	var items []models.OrderItem
+	for _, i := range o.OrderItems {
+		items = append(items, models.OrderItem{
+			ProductID:          i.ProductID,
+			ProductVariationID: i.ProductVariationID,
+			Quantity:           i.Quantity,
+			Price:              i.Price,
+			Subtotal:           i.Price * float64(i.Quantity),
+			Discount:           0.0,
+		})
+	}
+	return &models.Order{
+		UserID:     o.UserID,
+		OrderItems: items,
+		Status:     models.OrderStatusPending,
+		OrderDate:  time.Now(),
+	}
+}
+
+
+type OrderItemAddBody struct {
+	OrderID            uint    `json:"order_id"`
+	ProductID          uint    `json:"product_id"`
+	ProductVariationID uint    `json:"product_variation_id"`
+	Quantity           uint    `json:"quantity"`
+	Price              float64 `json:"price"`
+}
+
+func (o *OrderItemAddBody) ToModel() *models.OrderItem {
+	return &models.OrderItem{
+		OrderID:            o.OrderID,
+		ProductID:          o.ProductID,
+		ProductVariationID: o.ProductVariationID,
+		Quantity:           o.Quantity,
+		Price:              o.Price,
+		Subtotal:           o.Price * float64(o.Quantity),
+		Discount:           0.0,
 	}
 }

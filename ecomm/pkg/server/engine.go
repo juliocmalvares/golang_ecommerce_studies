@@ -73,5 +73,16 @@ func (r *Server) routes() {
 			productGroup.GET("/findByName", productCtr.FindByName())
 			productGroup.GET("/listByCategory", productCtr.ListByCategoryID())
 		}
+
+		//Order
+		orderGroup := apiGroup.Group("/order")
+		{
+			orderCtr := controllers.InitOrderController()
+			orderGroup.POST("/create", orderCtr.Create())
+			orderGroup.GET("/list", orderCtr.List())
+			orderGroup.GET("/listByUserID", orderCtr.ListByUserID())
+			orderGroup.POST("/addOrderItem", orderCtr.AddOrderItem())
+			orderGroup.DELETE("/removeOrderItem", orderCtr.RemoveOrderItem())
+		}
 	}
 }
